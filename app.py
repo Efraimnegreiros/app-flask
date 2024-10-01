@@ -51,6 +51,8 @@ def gerar_imagem(aniversariantes, aniversariantes_casamentos):
         font_geral = ImageFont.truetype('GlacialIndifference-Bold.otf', 40)
         nome = membro['nome']
         data_aniversario = membro['data_aniversario']
+        data_aniversario = datetime.strptime(data_aniversario, "%Y-%m-%d")
+        data_aniversario = data_aniversario.strftime('%d/%m')
         draw.text((157, y_position), f"{nome}", fill='black', font=font_geral)
         draw.text((800, y_position), f"{data_aniversario}", fill='black', font=font_geral)
         y_position += 55  # Espaço entre as linhas
@@ -59,6 +61,8 @@ def gerar_imagem(aniversariantes, aniversariantes_casamentos):
         font_geral = ImageFont.truetype('GlacialIndifference-Bold.otf', 40)
         nome = membro['nome']
         data_aniversario = membro['data_aniversario']
+        data_aniversario = datetime.strptime(data_aniversario, "%Y-%m-%d")
+        data_aniversario = data_aniversario.strftime('%d/%m')
         draw.text((157, y_position), f"{nome}", fill='black', font=font_geral)
         draw.text((800, y_position), f"{data_aniversario}", fill='black', font=font_geral)
         y_position += 60  # Espaço entre as linhas
