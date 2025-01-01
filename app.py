@@ -32,24 +32,55 @@ def index():
 
     return render_template('index.html', aniversariantes=[])
 
+
+
 def buscar_aniversariantes(start_date, end_date):
-    start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
-    end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
-    # response = supabase.table('membros').select('*').gte('data_aniversario', start_date).lte('data_aniversario', end_date).execute()
+    # Converter para objeto datetime, mas sem o ano
+    start_month_day = datetime.strptime(start_date, '%Y-%m-%d').date().replace(year=1)
+    end_month_day = datetime.strptime(end_date, '%Y-%m-%d').date().replace(year=1)
+
+    # Consultar os aniversariantes
     response = supabase.table('membros')\
-    .select('*')\
-    .gte('data_aniversario', start_date)\
-    .lte('data_aniversario', end_date)\
-    .order('data_aniversario')\
-    .execute()
+        .select('*')\
+        .execute()
 
+    aniversariantes = []
+    for membro in response.data:
+        data_aniversario = datetime.strptime(membro['data_aniversario'], "%Y-%m-%d").date()
+        data_aniversario_month_day = data_aniversario.replace(year=1)
 
-    return response.data
+        # Verificar se a data do aniversário está dentro do intervalo, comparando apenas mês e dia
+        if start_month_day <= data_aniversario_month_day <= end_month_day:
+            aniversariantes.append(membro)
+
+    # Ordenar os aniversariantes pela data de aniversário (ignorando o ano)
+    aniversariantes.sort(key=lambda x: datetime.strptime(x['data_aniversario'], "%Y-%m-%d").date().replace(year=1))
+
+    return aniversariantes
+
 def buscar_aniversariantes_casamento(start_date, end_date):
-    start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
-    end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
-    response = supabase.table('aniversarios_casamento').select('*').gte('data_aniversario', start_date).lte('data_aniversario', end_date).execute()
-    return response.data
+    # Converter para objeto datetime, mas sem o ano
+    start_month_day = datetime.strptime(start_date, '%Y-%m-%d').date().replace(year=1)
+    end_month_day = datetime.strptime(end_date, '%Y-%m-%d').date().replace(year=1)
+
+    # Consultar os aniversariantes de casamento
+    response = supabase.table('aniversarios_casamento').select('*').execute()
+
+    aniversariantes_casamentos = []
+    for membro in response.data:
+        data_aniversario = datetime.strptime(membro['data_aniversario'], "%Y-%m-%d").date()
+        data_aniversario_month_day = data_aniversario.replace(year=1)
+
+        # Verificar se a data do casamento está dentro do intervalo, comparando apenas mês e dia
+        if start_month_day <= data_aniversario_month_day <= end_month_day:
+            aniversariantes_casamentos.append(membro)
+
+    # Ordenar os aniversariantes de casamento pela data de aniversário (ignorando o ano)
+    aniversariantes_casamentos.sort(key=lambda x: datetime.strptime(x['data_aniversario'], "%Y-%m-%d").date().replace(year=1))
+
+    return aniversariantes_casamentos
+
+
 def gerar_imagem(aniversariantes, aniversariantes_casamentos, y_position=275, tamanhofonte=40, espacamento=55):
     # Carregar a imagem padrão
     image = Image.open('static/padrao.png')
